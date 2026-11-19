@@ -1,0 +1,56 @@
+{
+  "default_branch": "astana",
+  "branches": [
+    {
+      "branch_id": "astana",
+      "branch_name": "Демонстрационный филиал",
+      "can_issue": true,
+      "legal_name": "ТОО «Демонстрационная организация»",
+      "header_image": "/assets/demo-header.svg",
+      "header_source": "Вымышленная демонстрационная шапка",
+      "position_lines": [
+        "Руководитель демонстрационного отдела"
+      ],
+      "signer": "Примеров Пример Примерович",
+      "footer_phone": "Тел. +7 700 000 00 00",
+      "requisites_note": "Вымышленные сведения. Не для отправки клиентам.",
+      "layout": {
+        "body_pt": 14,
+        "min_body_pt": 12,
+        "step_pt": 0.5,
+        "left_pt": 72,
+        "right_pt": 69,
+        "header_left_pt": 73.5,
+        "header_top_pt": 49.5,
+        "header_width_pt": 451.5,
+        "header_height_pt": 116.25,
+        "meta_top_pt": 194.9,
+        "meta_line_pt": 29.2255,
+        "title_gap_pt": 38.4,
+        "body_gap_pt": 25.7,
+        "body_line_ratio": 1.3224,
+        "paragraph_gap_pt": 12,
+        "indent_pt": 35.25,
+        "footer_top_pt": 694.95,
+        "footer_line_pt": 30.5134,
+        "footer_phone_gap_pt": 33.84,
+        "footer_phone_pt": 13,
+        "long_addressee_gap_pt": 11.25
+      }
+    },
+    {
+      "branch_id": "demo-semey",
+      "branch_name": "Прежний демонстрационный филиал",
+      "can_issue": false,
+      "legal_name": "ТОО «Демонстрационная организация»",
+      "header_image": "/assets/demo-header.svg",
+      "position_lines": [
+        "Руководитель демонстрационного отдела"
+      ],
+      "signer": "Примеров Пример Примерович",
+      "footer_phone": "Тел. +7 700 000 00 00",
+      "header_source": "Вымышленная демонстрационная шапка",
+      "requisites_note": "Вымышленные сведения. Не для отправки клиентам."
+    }
+  ]
+}

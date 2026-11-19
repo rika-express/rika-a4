@@ -1,0 +1,196 @@
+{
+  "short": {
+    "kind": "delivery",
+    "outcome_state": "completed",
+    "outcome_date": "2026-01-12",
+    "outcome_approved": false,
+    "customer": "ТОО «Вымышленный заказчик»",
+    "addressee": "ТОО «Вымышленный заказчик»",
+    "recipient": "Вымышленный получатель",
+    "waybill": "0000000000001",
+    "order_date": "2026-01-05",
+    "notification_date": "2026-01-13",
+    "outgoing_number": "12",
+    "address": "г. Учебный, ул. Примерная, д. 1",
+    "events": [
+      {
+        "type": "delivered",
+        "result": "signed",
+        "date": "2026-01-12",
+        "fields": {
+          "signed_by": "Примеров П. П. (вымышленное лицо)"
+        }
+      }
+    ]
+  },
+  "address": {
+    "kind": "return",
+    "outcome_state": "completed",
+    "outcome_date": "2026-01-13",
+    "outcome_approved": true,
+    "customer": "ТОО «Вымышленный заказчик»",
+    "addressee": "ТОО «Вымышленный заказчик»",
+    "recipient": "Вымышленный получатель",
+    "waybill": "0000000000002",
+    "order_date": "2026-01-08",
+    "notification_date": "2026-01-13",
+    "outgoing_number": "1",
+    "address": "г. Учебный, ул. Примерная, д. 1",
+    "events": [
+      {
+        "type": "address",
+        "result": "incomplete",
+        "date": "2026-01-12",
+        "fields": {
+          "missing": "отсутствует название улицы"
+        }
+      },
+      {
+        "type": "contact",
+        "result": "call_no_answer",
+        "date": "2026-01-12",
+        "fields": {
+          "phones": [
+            {
+              "country": "kz",
+              "number": "+7-700-000-00-00"
+            }
+          ],
+          "source": "накладной"
+        }
+      }
+    ]
+  },
+  "redirect": {
+    "kind": "return",
+    "outcome_state": "completed",
+    "outcome_date": "2026-01-13",
+    "outcome_approved": true,
+    "customer": "ТОО «Вымышленный заказчик»",
+    "addressee": "ТОО «Вымышленный заказчик»",
+    "recipient": "Вымышленный получатель",
+    "waybill": "0000000000003",
+    "order_date": "2026-01-08",
+    "notification_date": "2026-01-13",
+    "outgoing_number": "2",
+    "address": "г. Учебный, ул. Примерная, д. 1",
+    "events": [
+      {
+        "type": "visit",
+        "result": "no_org",
+        "date": "2026-01-09",
+        "fields": {}
+      },
+      {
+        "type": "contact",
+        "result": "new_address",
+        "date": "2026-01-09",
+        "fields": {
+          "phones": [
+            {
+              "country": "kz",
+              "number": "+7-700-000-00-00"
+            }
+          ],
+          "source": "накладной",
+          "new_address": "г. Учебный, ул. Примерная, д. 1"
+        }
+      },
+      {
+        "type": "redirect",
+        "result": "approved",
+        "date": "2026-01-09",
+        "fields": {
+          "new_address": "г. Учебный, ул. Примерная, д. 1",
+          "approved": true
+        }
+      },
+      {
+        "type": "visit",
+        "result": "absent",
+        "date": "2026-01-12",
+        "fields": {}
+      },
+      {
+        "type": "contact",
+        "result": "call_no_answer",
+        "date": "2026-01-12",
+        "fields": {
+          "phones": [
+            {
+              "country": "kz",
+              "number": "+7-700-000-00-00"
+            }
+          ],
+          "source": "накладной"
+        }
+      }
+    ]
+  },
+  "complex": {
+    "kind": "destruction",
+    "outcome_state": "completed",
+    "outcome_date": "2026-01-13",
+    "outcome_approved": true,
+    "customer": "ТОО «Вымышленный заказчик»",
+    "addressee": "ТОО «Вымышленный заказчик»",
+    "recipient": "Вымышленный получатель",
+    "waybill": "0000000000004",
+    "order_date": "2025-12-25",
+    "notification_date": "2026-01-13",
+    "outgoing_number": "5",
+    "address": "г. Учебный, ул. Примерная, д. 1",
+    "events": [
+      {
+        "type": "visit",
+        "result": "no_org",
+        "date": "2025-12-26",
+        "fields": {}
+      },
+      {
+        "type": "contact",
+        "result": "pickup",
+        "date": "2025-12-26",
+        "fields": {
+          "phones": [
+            {
+              "country": "kz",
+              "number": "+7-700-000-00-00"
+            }
+          ],
+          "source": "накладной"
+        }
+      },
+      {
+        "type": "storage",
+        "result": "period",
+        "date": "2025-12-27",
+        "fields": {
+          "start": "2025-12-27",
+          "end": "2026-01-13",
+          "pickup_address": "г. Учебный, ул. Примерная, д. 1"
+        }
+      },
+      {
+        "type": "uncollected",
+        "result": "not_collected",
+        "date": "2026-01-13",
+        "fields": {}
+      },
+      {
+        "type": "contact",
+        "result": "call_no_answer",
+        "date": "2026-01-13",
+        "fields": {
+          "phones": [
+            {
+              "country": "kz",
+              "number": "+7-700-000-00-00"
+            }
+          ],
+          "source": "накладной"
+        }
+      }
+    ]
+  }
+}

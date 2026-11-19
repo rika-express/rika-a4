@@ -1,0 +1,15 @@
+{
+  "name": "rika-a4",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "python backend/server.py",
+    "check": "node --check frontend/app.js && node --check frontend/components.js"
+  },
+  "dependencies": {
+    "vue": "3.5.13"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
+  }
+}
