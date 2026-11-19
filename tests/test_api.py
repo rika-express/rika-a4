@@ -33,6 +33,17 @@ class ApiTests(unittest.TestCase):
   with urlopen(req,timeout=15) as r:return json.load(r)
  def save(self,doc=None,**kwargs):
   body={'branch':'astana','request_key':str(uuid.uuid4()),'document':doc or fixture()};body.update(kwargs);return self.request('/api/notifications',body)
+ def test_visit_delivery_preview_save_copy(self):
+  doc=fixture();doc['events']=[{'id':'visit1','type':'visit','result':'delivered','date':'2026-01-12','fields':{'signed_by':'Примеров П. П.'}}]
+  preview=self.request('/api/preview',{'branch':'astana','document':doc})
+  self.assertEqual(preview['document']['kind'],'delivery');self.assertEqual(self.request('/api/notifications'),[])
+  original=self.save(doc);same=self.save(doc,id=original['id'],revision=original['revision'])
+  self.assertEqual(original['document'],same['document'])
+  copied=self.save(deepcopy(doc));self.assertNotEqual(copied['id'],original['id'])
+  self.assertEqual(self.request('/api/notifications/'+str(original['id']))['document'],original['document'])
+  self.assertEqual(len(copied['document']['events']),1)
+  doc['events'][0]['fields']={}
+  with self.assertRaises(HTTPError):self.request('/api/preview',{'branch':'astana','document':doc})
  def test_preview_counter_87_idempotent_copy_edit(self):
   self.request('/api/counter',{'branch':'astana','year':2026,'last_used':87})
   for _ in range(3):self.assertEqual(self.request('/api/preview',{'branch':'astana','document':fixture()})['document']['outgoing_number'],'88')

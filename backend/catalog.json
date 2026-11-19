@@ -5,6 +5,11 @@
     "visit": {
       "label": "Визит курьера",
       "results": {
+        "delivered": {
+          "label": "Вручение",
+          "use_result": ["delivered", "signed"],
+          "completion": "delivery"
+        },
         "closed": {
           "label": "Закрыто / никто не открыл",
           "phrase": "{date} {visit_location} — по адресу закрыто, никто не открыл.",

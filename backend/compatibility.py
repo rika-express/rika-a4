@@ -1,7 +1,7 @@
 """Преобразование только по явному действию; архивный payload не изменяется."""
 from copy import deepcopy
 import uuid
-from domain_helpers import TERMINALS
+from domain_helpers import completion
 
 def uid():return str(uuid.uuid4())
 
@@ -30,7 +30,7 @@ def to_events(data):
             event['needs_review']=True
             event['review_message']='В прежней записи указан иной источник номера. Свяжите событие с предоставленными контактами или явно уточните исходные номера.'
     previous=doc.get('final_event',{}).get('kind') or doc.get('kind')
-    if previous and not any(TERMINALS.get(e.get('type'))==previous for e in events):
+    if previous and not any(completion(e)==previous for e in events):
         typ={'delivery':'delivered','return':'return','destruction':'destruction'}.get(previous)
         if typ:
             event={'id':uid(),'type':typ,'result':'completed' if typ in ('return','destruction') else '', 'fields':{}}

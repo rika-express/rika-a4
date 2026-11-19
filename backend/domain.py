@@ -3,11 +3,11 @@ import json,re
 from datetime import date
 from pathlib import Path
 from phones import normalize_phone
-from domain_helpers import TERMINALS
+from domain_helpers import completion,resolve_catalog
 ROOT=Path(__file__).resolve().parents[1]
 class ValidationError(ValueError):
     def __init__(self,message,path=''):super().__init__(message);self.path=path
-def catalog():return json.loads((ROOT/'backend/catalog.json').read_text(encoding='utf-8'))
+def catalog():return resolve_catalog(json.loads((ROOT/'backend/catalog.json').read_text(encoding='utf-8')))
 def settings():
     local=ROOT/'backend/settings.json'
     return json.loads((local if local.exists() else ROOT/'backend/settings.example.json').read_text(encoding='utf-8'))
@@ -49,10 +49,10 @@ def validate(data):
     if doc['order_date']>doc['notification_date']:raise ValidationError('Дата заказа позже даты уведомления.','order_date')
     incoming=data.get('events')
     if not isinstance(incoming,list) or len(incoming)>40:raise ValidationError('В истории допустимо до 40 событий.','events')
-    endings=[(i,e.get('type')) for i,e in enumerate(incoming) if isinstance(e,dict) and e.get('type') in TERMINALS]
+    endings=[(i,completion(e)) for i,e in enumerate(incoming) if isinstance(e,dict) and completion(e)]
     if len(endings)>1:
         names={'delivery':'доставка','return':'возврат','destruction':'уничтожение'}
-        details=', '.join(f'событие {i+1} — {names[TERMINALS[t]]}' for i,t in endings)
+        details=', '.join(f'событие {i+1} — {names[t]}' for i,t in endings)
         raise ValidationError('Указаны повторные или несовместимые завершения: '+details+'. Оставьте одно фактическое завершение.',f'events.{endings[1][0]}.type')
     if endings and endings[0][0]!=len(incoming)-1:raise ValidationError('Завершение должно быть последним событием истории. Проверьте события после него.',f'events.{endings[0][0]+1}.type')
     events=[];event_ids=set();sources={};previous=doc['order_date'];current_address=doc['address'];unresolved=False;storage=None;no_phone=False;invoice_contact=False
@@ -116,11 +116,11 @@ def validate(data):
             if not doc['order_date']<=start<=end<=doc['notification_date'] or event['date']>start:raise ValidationError(label+': проверьте период хранения.',p+'.fields.end')
             storage=(start,end)
         if typ=='uncollected' and (not storage or event['date']<storage[1]):raise ValidationError(label+': сначала укажите завершившийся период хранения.',p+'.date')
-        if typ in ('delivered','mailbox') and storage and event['date']<storage[1]:raise ValidationError(label+': вручение раньше окончания хранения.',p+'.date')
+        if completion(event)=='delivery' and storage and event['date']<storage[1]:raise ValidationError(label+': вручение раньше окончания хранения.',p+'.date')
         events.append(event)
     if no_phone and invoice_contact:raise ValidationError('Указаны отсутствие телефона в накладной и связь по исходному номеру. Уточните событие или свяжите его с новыми контактами отправителя.','events')
     if not endings:raise ValidationError('Добавьте завершающее событие: «Вручение», «Доставка в почтовый ящик», «Возврат» или «Уничтожение».','events')
-    doc.update(events=events,kind=TERMINALS[endings[0][1]],schema_version=4)
+    doc.update(events=events,kind=endings[0][1],schema_version=4)
     return doc
 def render(doc,branch):
     specs=catalog()['types'];paragraphs=[];previous_date=None;visited=set()

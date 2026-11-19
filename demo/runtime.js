@@ -3,6 +3,7 @@ const Demo = (() => {
  const KEY='rika-a4-static-demo-v1',copy=x=>JSON.parse(JSON.stringify(x));
  const config=Promise.all(['settings.json','catalog.json','phone-rules.json'].map(async p=>{const r=await fetch('./'+p);if(!r.ok)throw Error('Не удалось загрузить настройки демонстрации.');return r.json();}));
  const terminal={delivered:'delivery',mailbox:'delivery',return:'return',destruction:'destruction'};
+ const completion=e=>e.type==='visit'&&e.result==='delivered'?'delivery':terminal[e.type];
  function fail(message,field){const e=Error(message);e.field=field;throw e;}
  function read(){try{const raw=localStorage.getItem(KEY);const s=raw?JSON.parse(raw):{records:[],counters:{},nextId:1};if(!Array.isArray(s.records)||!s.counters||!Number.isSafeInteger(s.nextId))throw Error();return s;}catch{throw Error('Демонстрационный архив браузера недоступен или повреждён. Данные не перезаписаны. Разрешите localStorage.');}}
  function write(s){try{localStorage.setItem(KEY,JSON.stringify(s));}catch{throw Error('Браузер не сохранил архив: проверьте разрешения и свободное место.');}}
@@ -16,7 +17,7 @@ const Demo = (() => {
   for(const k of ['order_date','notification_date'])doc[k]=iso(input[k],k);
   if(doc.order_date>doc.notification_date)fail('Дата заказа позже уведомления.','order_date');
   if(!Array.isArray(input.events)||input.events.length>40)fail('Допустимо до 40 событий.','events');
-  const endings=input.events.map((e,i)=>({e,i})).filter(({e})=>terminal[e.type]);
+  const endings=input.events.map((e,i)=>({e,i})).filter(({e})=>completion(e));
   if(!endings.length)fail('Добавьте вручение, доставку в ящик, возврат или уничтожение.','events');
   if(endings.length>1)fail('Повторные или несовместимые завершения. Оставьте одно.','events.'+endings[1].i+'.type');
   if(endings[0].i!==input.events.length-1)fail('Завершение должно быть последним событием.','events.'+(endings[0].i+1)+'.type');
@@ -51,11 +52,11 @@ const Demo = (() => {
    if(e.type==='contact'&&result==='later'&&f.requested_date<e.date)fail('Запрошенная дата раньше разговора.',p+'.fields.requested_date');
    if(e.type==='storage'){if(!(doc.order_date<=f.start&&f.start<=f.end&&f.end<=doc.notification_date&&e.date<=f.start))fail('Проверьте период хранения.',p+'.fields.end');storage=[f.start,f.end];}
    if(e.type==='uncollected'&&(!storage||e.date<storage[1]))fail('Сначала укажите завершившийся период хранения.',p+'.date');
-   if(['delivered','mailbox'].includes(e.type)&&storage&&e.date<storage[1])fail('Вручение раньше окончания хранения.',p+'.date');
+   if(completion(e)==='delivery'&&storage&&e.date<storage[1])fail('Вручение раньше окончания хранения.',p+'.date');
    return e;
   });
   if(noPhone&&invoice)fail('Указаны отсутствие телефона в накладной и связь по исходному номеру. Уточните источник контактов.','events');
-  return {...doc,kind:terminal[endings[0].e.type],schema_version:4};
+  return {...doc,kind:completion(endings[0].e),schema_version:4};
  }
  function render(doc,branch,catalog){const paragraphs=[],visited=new Set();let previous=null;
   for(const e of doc.events){const values={};for(const [k,v] of Object.entries(e.fields))values[k]=Array.isArray(v)?v.map(p=>p.number).join(', '):typeof v==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(v)?fmt(v):v;

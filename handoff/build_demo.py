@@ -1,5 +1,5 @@
 """Build an isolated, entirely static Pages artifact from reviewed sources."""
-import json,re,shutil
+import json,re,shutil,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'artifacts/pages'
@@ -8,7 +8,9 @@ for name in ('components.js','styles.css'):shutil.copyfile(ROOT/'frontend'/name,
 shutil.copyfile(ROOT/'demo/runtime.js',OUT/'runtime.js')
 shutil.copyfile(ROOT/'node_modules/vue/dist/vue.global.prod.js',OUT/'vue.js')
 shutil.copyfile(ROOT/'node_modules/vue/LICENSE',OUT/'VUE-LICENSE.txt')
-shutil.copyfile(ROOT/'backend/catalog.json',OUT/'catalog.json')
+sys.path.insert(0,str(ROOT/'backend'))
+from domain_helpers import resolve_catalog
+(OUT/'catalog.json').write_text(json.dumps(resolve_catalog(json.loads((ROOT/'backend/catalog.json').read_text(encoding='utf-8'))),ensure_ascii=False,indent=2),encoding='utf-8')
 shutil.copyfile(ROOT/'backend/phone-rules.json',OUT/'phone-rules.json')
 cfg=json.loads((ROOT/'backend/settings.example.json').read_text(encoding='utf-8'))
 cfg['branches']=[b for b in cfg['branches'] if b['can_issue']]

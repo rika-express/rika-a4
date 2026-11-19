@@ -11,6 +11,24 @@ def linked(result='call_no_answer',extra=None):
     return {'id':'contact1','type':'contact','result':result,'date':'2026-01-03','fields':{'phones':[{'country':'KZ','number':'+7-701-123-45-67'}],**(extra or {})},'contact_ref':{'event_id':'sender1','phone_ids':['phone1']}}
 def close(typ='return'):return {'id':'end1','type':typ,'fields':{}}
 class EventsTests(unittest.TestCase):
+ def test_visit_handover_uses_existing_template_and_required_signer(self):
+    event={'id':'visit-delivery','type':'visit','result':'delivered','date':'2026-01-03','fields':{'signed_by':'Примеров П. П.','phones':[],'missing':'неактуальные сведения'}}
+    d=base([event]);v=validate(d)
+    self.assertEqual(v['kind'],'delivery');self.assertEqual(len(v['events']),1)
+    self.assertEqual(v['events'][0]['fields'],{'signed_by':'Примеров П. П.'})
+    standalone=deepcopy(d);standalone['events'][0].update(type='delivered',result='signed')
+    self.assertEqual(self.text(d),self.text(standalone))
+    self.assertEqual(self.text(d).count('корреспонденция вручена'),1)
+    self.assertEqual(len(to_events({**d,'kind':'delivery','final_event':{'kind':'delivery'}})['events']),1)
+    d['events'][0]['fields']['signed_by']=''
+    with self.assertRaises(ValidationError) as error:validate(d)
+    self.assertEqual(error.exception.path,'events.0.fields.signed_by')
+ def test_visit_handover_conflicts_and_storage_dates(self):
+    event={'id':'v','type':'visit','result':'delivered','date':'2026-01-03','fields':{'signed_by':'Примеров П. П.'}}
+    for ending in [close(),{'id':'d','type':'delivered','result':'signed','date':'2026-01-04','fields':{'signed_by':'Примеров П. П.'}}]:
+        with self.assertRaises(ValidationError):validate(base([event,ending]))
+    storage={'id':'s','type':'storage','result':'period','date':'2026-01-02','fields':{'start':'2026-01-02','end':'2026-01-10','pickup_address':'Вымышленный пункт'}}
+    with self.assertRaises(ValidationError):validate(base([storage,event]))
  def text(self,doc):return ' '.join(render(validate(doc),settings()['branches'][0])['paragraphs'])
  def test_a_delivery_without_final(self):
     d=base([{'type':'delivered','result':'signed','date':'2026-01-03','fields':{'signed_by':'Иванов И. И.'}}]);v=validate(d)
