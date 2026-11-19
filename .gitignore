@@ -33,6 +33,16 @@
 !/handoff/
 /handoff/*
 !/handoff/audit.py
+!/handoff/build_demo.py
+!/demo/
+/demo/*
+!/demo/runtime.js
+!/.github/
+/.github/*
+!/.github/workflows/
+/.github/workflows/*
+!/.github/workflows/pages.yml
+!/tests/pages.cjs
 
 # Defense in depth, including nested files.
 **/__pycache__/
